@@ -18,3 +18,42 @@ View your app in AI Studio: https://ai.studio/apps/drive/1Gu-yJwkNKlbiL6ioNZZ3qE
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Google Cloud Run にデプロイする
+
+**前提条件:**
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) がインストール済み
+- `gcloud auth login` で認証済み
+- 使用する GCP プロジェクトで [Cloud Run API](https://console.cloud.google.com/apis/library/run.googleapis.com) と [Container Registry API](https://console.cloud.google.com/apis/library/containerregistry.googleapis.com) が有効
+
+**手順 1: プロジェクトを設定**
+```bash
+gcloud config set project YOUR_PROJECT_ID
+```
+
+**手順 2: 方法 A - Cloud Build でデプロイ（推奨）**
+```bash
+gcloud builds submit \
+  --config=cloudbuild.yaml \
+  --substitutions=_GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
+
+**手順 2: 方法 B - 手動で Docker ビルド & デプロイ**
+```bash
+# 1. イメージをビルド（API キーをビルド時に埋め込み）
+docker build --build-arg GEMINI_API_KEY=YOUR_GEMINI_API_KEY -t gcr.io/YOUR_PROJECT_ID/fanclub-gacha .
+
+# 2. GCR にプッシュ
+docker push gcr.io/YOUR_PROJECT_ID/fanclub-gacha
+
+# 3. Cloud Run にデプロイ
+gcloud run deploy fanclub-gacha \
+  --image gcr.io/YOUR_PROJECT_ID/fanclub-gacha \
+  --platform managed \
+  --region asia-northeast1 \
+  --allow-unauthenticated
+```
+
+デプロイ後、Cloud Run が発行する URL でアプリにアクセスできます。
+
+> **注意:** Gemini API キーはビルド時にフロントエンドに埋め込まれます。本番環境では、API キーの制限（リファラ制限など）を設定することを推奨します。
