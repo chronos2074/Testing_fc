@@ -8,10 +8,6 @@ RUN npm install
 
 COPY . .
 
-# ビルド時に GEMINI_API_KEY を渡す（Cloud Build の --build-arg で指定）
-ARG GEMINI_API_KEY
-RUN echo "GEMINI_API_KEY=$GEMINI_API_KEY" > .env
-
 RUN npm run build
 
 # Stage 2: 本番用 - 静的ファイルを配信

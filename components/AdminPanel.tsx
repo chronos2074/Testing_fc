@@ -12,6 +12,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
     image1: '',
     image2: '',
     image3: '',
+    comment: '',
   });
   
   const [showGuide, setShowGuide] = useState(false);
@@ -19,17 +20,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
     if (saved) {
-      setSettings(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      setSettings({ comment: '', ...parsed });
     } else {
       setSettings({
         image1: DEFAULT_PRIZES[0].url,
         image2: DEFAULT_PRIZES[1].url,
         image3: DEFAULT_PRIZES[2].url,
+        comment: 'ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥',
       });
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setSettings({
       ...settings,
       [e.target.name]: e.target.value,
@@ -112,11 +115,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
 
         {showGuide && (
             <div className="bg-gray-100 p-4 rounded-lg mb-6 text-sm text-gray-700 space-y-2 border border-gray-300">
-                <p>1. 下の入力欄に、今月の画像URLを3つ入力してください。</p>
+                <p>1. 下の入力欄に、今月の画像URLを3つ、選手からのコメントを入力してください。</p>
                 <p>2. 入力すると右側に小さなプレビューが出ます。画像が表示されているか確認してください。</p>
                 <p>3. <span className="font-bold text-green-600">「会員配布用URLをコピー」</span>ボタンを押します。</p>
                 <p>4. コピーされたURLを、ファンクラブ会員へのメールやLINEに貼り付けて送信してください。</p>
-                <p className="text-xs text-red-500 mt-2">※ このURLを受け取った人は、自動的にここで設定した画像でガチャを回せます。</p>
+                <p className="text-xs text-red-500 mt-2">※ このURLを受け取った人は、自動的にここで設定した画像・コメントでガチャを回せます。</p>
             </div>
         )}
 
@@ -124,6 +127,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
           {renderImageInput("画像A (Normal)", "image1", settings.image1)}
           {renderImageInput("画像B (Rare)", "image2", settings.image2)}
           {renderImageInput("画像C (Super Rare)", "image3", settings.image3)}
+          <div className="mb-4">
+            <label className="block font-bold text-sm mb-1 text-gray-700">選手からのコメント</label>
+            <textarea
+              name="comment"
+              value={settings.comment || ''}
+              onChange={handleChange}
+              rows={3}
+              className="w-full border-2 border-gray-300 p-2 rounded focus:border-blue-600 outline-none text-sm resize-y"
+              placeholder="ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥"
+            />
+            <p className="text-xs text-gray-500 mt-1">空欄の場合はデフォルトメッセージが表示されます</p>
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

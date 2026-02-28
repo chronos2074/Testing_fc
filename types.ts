@@ -20,4 +20,5 @@ export interface AdminSettings {
   image1: string;
   image2: string;
   image3: string;
+  comment: string;
 }

@@ -1,12 +1,10 @@
 # Google Cloud Build による Cloud Run デプロイ
-# 使い方: gcloud builds submit --config=cloudbuild.yaml --substitutions=_GEMINI_API_KEY=YOUR_API_KEY
+# 使い方: gcloud builds submit --config=cloudbuild.yaml
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
-      - '--build-arg'
-      - 'GEMINI_API_KEY=${_GEMINI_API_KEY}'
       - '-t'
       - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'
       - '.'
@@ -31,7 +29,6 @@ steps:
 substitutions:
   _SERVICE_NAME: 'fanclub-gacha'
   _REGION: 'asia-northeast1'
-  _GEMINI_API_KEY: ''
 
 images:
   - 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}'

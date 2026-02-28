@@ -16,6 +16,7 @@ export default function App() {
   
   const [showAdmin, setShowAdmin] = useState(false);
   const [historyResult, setHistoryResult] = useState<SpinResult | null>(null);
+  const [adminComment, setAdminComment] = useState<string | null>(null);
 
   // Load history and config on mount
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function App() {
             return prize;
         });
         setPrizes(newPrizes);
+        if (settings.comment) setAdminComment(settings.comment);
       } catch (e) {
         console.error("Failed to load config from URL", e);
       }
@@ -85,17 +87,13 @@ export default function App() {
     const randomIndex = Math.floor(Math.random() * prizes.length);
     const selectedPrize = prizes[randomIndex];
 
-    // 2. Execute animation and data fetching in parallel for speed
-    // Start generating message immediately
-    const messagePromise = generateFanMessage(selectedPrize.name).catch(() => {
-        return "熱い応援ありがとう！この画像を受け取ってくれ！";
-    });
+    // 2. Message: Use admin-configured comment if set, else default
+    const message = adminComment?.trim()
+      ? adminComment.trim()
+      : await generateFanMessage(selectedPrize.name).catch(() => "熱い応援ありがとう！この画像を受け取ってくれ！");
 
-    // Set a minimum animation time (e.g. 1 second)
-    const animationPromise = new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Wait for both
-    const [message] = await Promise.all([messagePromise, animationPromise]);
+    // Minimum animation time (1 second)
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const result: SpinResult = {
       prize: selectedPrize,
