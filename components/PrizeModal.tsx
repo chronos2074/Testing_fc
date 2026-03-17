@@ -62,7 +62,7 @@ export const PrizeModal: React.FC<PrizeModalProps> = ({ result, onClose }) => {
           {/* Gemini Message */}
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6 w-full relative">
             <div className="absolute -top-3 -left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded border border-black transform -rotate-6">
-                選手からのコメント
+                ここに注目
             </div>
             <p className="text-blue-900 font-medium leading-relaxed mt-2 text-sm">
                 {result.message || "おめでとう！画像を保存してね！"}
