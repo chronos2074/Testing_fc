@@ -52,7 +52,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
   const handleCopyLink = () => {
     try {
         const configStr = JSON.stringify(settings);
-        const encoded = btoa(configStr);
+        const bytes = new TextEncoder().encode(configStr);
+        const encoded = btoa(String.fromCharCode(...bytes));
         const url = `${window.location.origin}${window.location.pathname}?cfg=${encoded}`;
         navigator.clipboard.writeText(url);
         alert('【毎月の作業完了！】\n会員配布用のURLをコピーしました。\n\nこのURLをLINEやメールで会員に送ってください。\n(アクセスすると自動的にこの画像設定が適用されます)');

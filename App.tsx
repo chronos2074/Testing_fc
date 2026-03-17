@@ -43,7 +43,8 @@ export default function App() {
     const cfg = params.get('cfg');
     if (cfg) {
       try {
-        const decoded = atob(cfg);
+        const bytes = Uint8Array.from(atob(cfg), c => c.charCodeAt(0));
+        const decoded = new TextDecoder().decode(bytes);
         const settings = JSON.parse(decoded);
         
         // Override default prizes with URL settings
