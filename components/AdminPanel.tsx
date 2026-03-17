@@ -23,7 +23,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
     const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
     if (saved) {
       const parsed = JSON.parse(saved);
-      setSettings({ comment: '', ...parsed });
+      setSettings({
+        comment1: '',
+        comment2: '',
+        comment3: '',
+        ...parsed,
+      });
     } else {
       setSettings({
         image1: DEFAULT_PRIZES[0].url,
@@ -49,14 +54,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
     alert('画像設定を保存しました！');
   };
 
-  const handleCopyLink = () => {
+  const handleCopyLink = async () => {
     try {
         const configStr = JSON.stringify(settings);
         const bytes = new TextEncoder().encode(configStr);
         const encoded = btoa(String.fromCharCode(...bytes));
         const url = `${window.location.origin}${window.location.pathname}?cfg=${encoded}`;
-        navigator.clipboard.writeText(url);
-        alert('【毎月の作業完了！】\n会員配布用のURLをコピーしました。\n\nこのURLをLINEやメールで会員に送ってください。\n(アクセスすると自動的にこの画像設定が適用されます)');
+        try {
+          await navigator.clipboard.writeText(url);
+          alert('【毎月の作業完了！】\n会員配布用のURLをコピーしました。\n\nこのURLをLINEやメールで会員に送ってください。\n(アクセスすると自動的にこの画像設定が適用されます)');
+        } catch {
+          prompt('URLのコピーに失敗しました。以下のURLを手動でコピーしてください:', url);
+        }
     } catch(e) {
         console.error(e);
         alert('URLの生成に失敗しました');
