@@ -12,7 +12,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
     image1: '',
     image2: '',
     image3: '',
-    comment: '',
+    comment1: '',
+    comment2: '',
+    comment3: '',
   });
   
   const [showGuide, setShowGuide] = useState(false);
@@ -27,7 +29,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
         image1: DEFAULT_PRIZES[0].url,
         image2: DEFAULT_PRIZES[1].url,
         image3: DEFAULT_PRIZES[2].url,
-        comment: 'ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥',
+        comment1: 'ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥',
+        comment2: 'ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥',
+        comment3: 'ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥',
       });
     }
   }, []);
@@ -65,27 +69,46 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
     }
   }
 
-  // Helper to render input with preview
-  const renderImageInput = (label: string, name: keyof AdminSettings, value: string) => (
-    <div className="mb-4">
-      <label className="block font-bold text-sm mb-1 text-gray-700">{label}</label>
-      <div className="flex gap-2 items-start">
-        <input 
-          type="text" 
-          name={name} 
-          value={value} 
-          onChange={handleChange}
-          className="flex-1 border-2 border-gray-300 p-2 rounded focus:border-blue-600 outline-none text-sm"
-          placeholder="https://example.com/image.jpg"
-        />
-        {/* Preview thumbnail */}
-        <div className="w-12 h-12 border border-gray-300 rounded bg-gray-100 flex-shrink-0 overflow-hidden">
-            {value ? (
-                <img src={value} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+  // Helper to render image input + comment textarea as a group
+  const renderImageGroup = (
+    label: string,
+    imageName: keyof AdminSettings,
+    imageValue: string,
+    commentName: keyof AdminSettings,
+    commentValue: string,
+  ) => (
+    <div className="mb-5 border-2 border-gray-200 rounded-lg p-3">
+      <p className="font-bold text-sm text-gray-600 mb-2">{label}</p>
+      <div className="mb-3">
+        <label className="block text-xs font-bold mb-1 text-gray-700">画像URL</label>
+        <div className="flex gap-2 items-start">
+          <input
+            type="text"
+            name={imageName}
+            value={imageValue}
+            onChange={handleChange}
+            className="flex-1 border-2 border-gray-300 p-2 rounded focus:border-blue-600 outline-none text-sm"
+            placeholder="https://example.com/image.jpg"
+          />
+          <div className="w-12 h-12 border border-gray-300 rounded bg-gray-100 flex-shrink-0 overflow-hidden">
+            {imageValue ? (
+              <img src={imageValue} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
             ) : (
-                <span className="text-xs text-gray-400 flex items-center justify-center h-full">No Img</span>
+              <span className="text-xs text-gray-400 flex items-center justify-center h-full">No Img</span>
             )}
+          </div>
         </div>
+      </div>
+      <div>
+        <label className="block text-xs font-bold mb-1 text-gray-700">ここに注目</label>
+        <textarea
+          name={commentName}
+          value={commentValue}
+          onChange={handleChange}
+          rows={2}
+          className="w-full border-2 border-gray-300 p-2 rounded focus:border-blue-600 outline-none text-sm resize-y"
+          placeholder="この画像に対するコメントを入力してください"
+        />
       </div>
     </div>
   );
@@ -124,21 +147,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onClose, onSave }) => {
         )}
 
         <div className="mb-6">
-          {renderImageInput("画像A (Normal)", "image1", settings.image1)}
-          {renderImageInput("画像B (Rare)", "image2", settings.image2)}
-          {renderImageInput("画像C (Super Rare)", "image3", settings.image3)}
-          <div className="mb-4">
-            <label className="block font-bold text-sm mb-1 text-gray-700">ここに注目</label>
-            <textarea
-              name="comment"
-              value={settings.comment || ''}
-              onChange={handleChange}
-              rows={3}
-              className="w-full border-2 border-gray-300 p-2 rounded focus:border-blue-600 outline-none text-sm resize-y"
-              placeholder="ナイス！今月も応援ありがとう！次の試合も全力でぶつかるぜ！🔥"
-            />
-            <p className="text-xs text-gray-500 mt-1">空欄の場合はデフォルトメッセージが表示されます</p>
-          </div>
+          {renderImageGroup("画像A (Normal)", "image1", settings.image1, "comment1", settings.comment1)}
+          {renderImageGroup("画像B (Rare)", "image2", settings.image2, "comment2", settings.comment2)}
+          {renderImageGroup("画像C (Super Rare)", "image3", settings.image3, "comment3", settings.comment3)}
+          <p className="text-xs text-gray-500 mt-1">空欄の場合はデフォルトメッセージが表示されます</p>
         </div>
 
         <div className="flex flex-col gap-3">

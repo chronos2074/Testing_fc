@@ -16,7 +16,7 @@ export default function App() {
   
   const [showAdmin, setShowAdmin] = useState(false);
   const [historyResult, setHistoryResult] = useState<SpinResult | null>(null);
-  const [adminComment, setAdminComment] = useState<string | null>(null);
+  const [adminComments, setAdminComments] = useState<(string | null)[]>([null, null, null]);
 
   // Load history and config on mount
   useEffect(() => {
@@ -54,7 +54,11 @@ export default function App() {
             return prize;
         });
         setPrizes(newPrizes);
-        if (settings.comment) setAdminComment(settings.comment);
+        setAdminComments([
+          settings.comment1 || null,
+          settings.comment2 || null,
+          settings.comment3 || null,
+        ]);
       } catch (e) {
         console.error("Failed to load config from URL", e);
       }
@@ -87,7 +91,8 @@ export default function App() {
     const randomIndex = Math.floor(Math.random() * prizes.length);
     const selectedPrize = prizes[randomIndex];
 
-    // 2. Message: Use admin-configured comment if set, else default
+    // 2. Message: Use per-image admin comment if set, else default
+    const adminComment = adminComments[randomIndex];
     const message = adminComment?.trim()
       ? adminComment.trim()
       : await generateFanMessage(selectedPrize.name).catch(() => "熱い応援ありがとう！この画像を受け取ってくれ！");
